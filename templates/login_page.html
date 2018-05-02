@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>科成帅比|登陆</title>
+    <script type="text/javascript" src="{% static 'my_blog/jquery-3.3.1.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'base/base.css' %}">
+    <link rel="stylesheet" href="{% static "my_blog/bootstrap.min.css" %}">
+    <script src="{% static 'my_blog/bootstrap.min.js' %}"></script>
+</head>
+<body>
+<nav class="navbar navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <div class="navbar-brand">
+                科成帅比博客
+            </div>
+            <button class="navbar-toggle collasped" data-toggle="collapse"
+                    data-target="#navbar-collapse" aria-expanded="false">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+             </button>
+        </div>
+        <div id="navbar-collapse" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">主页</a></li>
+                <li><a href="#">联系我们</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4 col-xs-4 col-xs-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">登陆</h3>
+                </div>
+            <div class="panel-body">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <!--{{ login_form }}-->
+                    {% for field in login_form %}
+
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        <p class="text-danger">{{ field.errors.as_text }}</p>
+                    {% endfor %}
+                    <span class="text-danger">{{ login_form.non_field_errors }}</span>
+                    <div style="text-align: center">
+                      <input type="submit" value="登 陆">
+                    </div>
+
+                </form>
+             </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+1.新建文件夹templatetags!!!，复制__init.py,使这个文件夹成为一个 Python 包
+2.新建py文件
+3.装饰器tag
+4.重启服务
+5.html模板中加载{% load comment_py(.py的名) %}
+    {{ 方法名(.py) }}

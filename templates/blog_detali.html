@@ -1,0 +1,297 @@
+{% load static %}
+{% load comment_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ blog.title }}</title>
+    <script type="text/javascript" src="{% static 'my_blog/jquery-3.3.1.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'base/base.css' %}">
+    <link rel="stylesheet" href="{% static "my_blog/bootstrap.min.css" %}">
+    <script src="{% static 'my_blog/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+    <style>
+        div.content {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        button.btn-default {
+            padding: 0;
+            {#padding-right: 0;#}
+        }
+        h2.title,div.info {
+            text-align: center;
+        }
+        span.comment_time {
+            font-size: 10px;
+        }
+        span.comment_text {
+            font-size: 16px;
+            padding-top: 5px;
+        }
+        span.glyphicon-comment {
+            color: rgba(31,28,30,0.16);
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <div class="navbar-brand">
+                科成帅比博客
+            </div>
+            <button class="navbar-toggle collasped" data-toggle="collapse"
+                    data-target="#navbar-collapse" aria-expanded="false">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+             </button>
+        </div>
+        <div id="navbar-collapse" class="collapse navbar-collapse">
+            <ul class="nav nav-pills ">
+                <li class="nav-li"><a href="/">主页</a></li>
+                <li class="nav-li"><a href="#">联系我们</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 col-xs-12">
+            <h2 class="title">{{ blog.title }}</h2>
+            <div>
+                <div class="info">
+                    作者：{{ blog.author }} &nbsp;
+                    发表时间：{{ blog.created_time|date:'Y-m-d H:m:s' }}&nbsp;&nbsp;
+                    标签：<a href="{% url 'show_type' blog.blog_type.id %}">
+                            {{ blog.blog_type }}
+                        </a>
+                    &nbsp;&nbsp;阅读：{{ read_num }}次
+                    &nbsp;&nbsp;评论({% comments_count blog %})
+                    <!--自定模板标签，blog为传入的参数-->
+
+                </div>
+            </div>
+            <div class="content">
+                <p>{{ blog.content|safe }}</p>
+            </div>
+            <center>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default">
+                        <a class="btn" href="/blog/{{ previous_blog.id }}">上一篇</a>
+                    </button>
+                    <button type="button" class="btn btn-default">
+                        <a class="btn" href="/blog/{{ next_blog.id }}">下一篇</a>
+                    </button>
+                </div>
+            </center>
+        </div>
+    </div>
+
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-1">
+            <div class="comment_area">
+                <div class="comment_area_head">
+                    <h4 style="display : inline">{% comments_count blog %}条评论</h4>
+                    <div style="float: right">
+                        <span class="glyphicon glyphicon-plus" style="color: #337ab7;"></span>
+                        <span><a href="javascript:comment_directly();">写下你的评论</a></span>
+                    </div>
+                </div>
+
+                <div>
+                    <div id="comment_list">
+                    <!--自定标签-->
+                    {% get_comments_list blog as comments %}
+                    {% for comment in comments %}
+                        <div id="root_{{ comment.id }}" class="comment_block">
+
+                                <div class="comment_detail">
+                                    <span class="glyphicon glyphicon-user" style="color: rgba(0, 1, 6, 0.55)"></span>
+                                    <span id="comment_{{ comment.pk }}">{{ comment.user.username }}</span>&nbsp;&nbsp;
+                                    <span class="comment_time">{{ comment.comment_time|date:"Y-m-d H:i" }}</span> <!---->
+                                    <div style="padding-bottom: 10px;padding-top: 10px;">
+                                       <span class="comment_text">{{ comment.text|safe }}</span>
+                                    </div>
+                                    <span class="glyphicon glyphicon-comment"></span>
+                                    <a href="javascript:reply({{ comment.pk }})">回复</a>
+                                </div>
+
+                                {% for reply in comment.root_comment.all %}
+                                <div class="reply">
+                                    <span class="glyphicon glyphicon-user" style="color: rgba(0, 1, 6, 0.55)"></span>
+                                    <span id="comment_{{ reply.pk }}">{{ reply.user.username }}</span>
+                                    <span>@{{ reply.reply_to.username }}:</span>
+                                    <span>{{ reply.text|safe }}</span>
+                                    <div style="font-size: 12px;text-align: right;height: 30px;">
+                                        <span>{{ reply.comment_time|date:"Y-m-d H:i" }}</span>
+                                        <span class="glyphicon glyphicon-comment"></span>
+                                        <a href="javascript:reply({{ reply.pk }})">回复</a>
+                                        <hr style="height:1px;margin-top: 8px;border:none;border-top:1px dashed rgba(38,44,92,0.13);" />
+                                    </div>
+                                </div>
+
+                                    {% if forloop.last %}
+                                        <div class="new_reply">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                            <a href="javascript:reply({{ comment.id }})">添加新评论</a>
+                                        </div>
+                                    {% endif %}
+
+                                {% endfor %}
+
+                                <hr>
+                        </div>
+
+                    {% empty %}
+                        <span id="no_comment">沙发由你坐</span>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div style="margin-bottom:4em;padding-top:20px;" name="comment">
+                <h4 class="comment-area-title">评论区</h4>
+                <br>
+                {% if user.is_authenticated %}
+                    <div id="editor_info_default">{{ user.username }},请发表评论</div>
+                    <!--回复时显示要回复的对象-->
+                    <div id="reply_content_block" style="display: none">
+                        回复 @
+                        <span id="reply_username"></span>
+                    </div>
+
+                    <form id="comment_form" action="{% url 'update_comment' %}" method="post" style="overflow: hidden">
+                        {% csrf_token %}
+
+                        <div class="form-group" name="comment_form">
+                            <!--传入blog参数到自定模板标签的方法（for...in 中无法传参）-->
+                            {% get_comment_form blog as comment_form %}
+                            {% for field in comment_form %}
+                                {{ field }}
+                            {% endfor %}
+                            <br>
+                            <span id='comment_error' class="text-danger pull-left"></span>
+                            <input type="submit" class="btn btn-primary pull-right" value="提交评论" style="float: right">
+                        </div>
+                    </form>
+
+                    <script>
+                        function reply(reply_comment_id) {
+                             //向comment_form的隐藏input中传入要回复的id，来自'回复'a标签
+                            $('#reply_comment_id').val(reply_comment_id);                            // 点击回复时编辑区显示要回复的对象
+                            var html = $('#comment_'+reply_comment_id).html();
+                            $('#reply_username').html(html);
+                            $('#reply_content_block').show();
+                            document.getElementById("editor_info_default").style.display="none";
+                            //document.getElementById("EleId").style.visibility="hidden";  占空白行
+
+                            //点击回复 滚动到文本编辑
+                            $('html').animate({scrollTop: $('#comment_form').offset().top -50}, 300, function () {
+                                CKEDITOR.instances['id_comment_text'].focus(); // 滚动后执行的func
+                            })  // 300：时间（动画）
+                        }
+
+                        function comment_directly() {
+                             $('html').animate({scrollTop: $('#comment_form').offset().top -50}, 300, function () {
+                                CKEDITOR.instances['id_comment_text'].focus(); // 滚动后执行的func
+                            })  // 300：时间（动画）
+                        }
+                        $('#comment_form').submit(function () {
+                            document.getElementById("comment_error").innerHTML = '';
+                            //更新数据到textarea
+                            CKEDITOR.instances['id_comment_text'].updateElement();
+
+                           // 异步提交
+                            $.ajax({
+                                url:'{% url 'update_comment' %}',
+                                type:'POST',
+                                data:$('#comment_form').serialize(),
+                                cache:false,
+                                success:function (data) {
+                                    console.log(data);
+                                    //判断数据是否成功
+                                    if(data['status']=='SUCCESS'){
+                                        //插入数据到评论列表
+                                        var comment_html = '<div id="root_'+data['pk']+' class="comment_block">'+
+                                                                '<div class="comment_detail">'+
+                                                                    '<span id="comment_'+data['pk']+'">'+data['username']+'</span>&nbsp;&nbsp;'+
+                                                                    '<span class="comment_time">'+comment_time_format(data['comment_time'])+'</span>'+
+                                                                    '<br>'+
+                                                                    '<span class="comment_text">'+data['comment_text']+'</span>'+'<br>'+
+                                                                    '<span class="glyphicon glyphicon-comment"></span> '+
+                                                                    '<a href="javascript:reply(' + data['pk'] + ')">回复</a>'+
+                                                                '</div>'+
+                                                            '</div> <hr>';
+
+                                        var reply_html = '<div class="reply">'+
+                                                            '<span id="comment_'+data['pk']+'">'+data['username']+':</span>'+
+                                                            '<span>@'+data['reply_to']+'</span> '+
+                                                            '<span>'+data['comment_text']+'</span> '+
+                                                            '<a href="javascript:reply('+data['pk']+')">回复</a>'+
+                                                        '</div>';
+
+                                        // 判断是否
+                                        if($('#reply_comment_id').val()==='0'){
+                                            // 插入一级评论
+                                            $('#comment_list').prepend(comment_html);
+                                        }else {
+                                            // 插入二级回复
+                                            $('#root_'+data['root_pk']).append(reply_html);
+                                        }
+                                        {#$('#comment_list').prepend(comment_ajax);#}
+
+                                        //清空编辑栏内容
+                                        CKEDITOR.instances['id_comment_text'].setData('');
+
+                                        $('#reply_content_block').hide();
+                                        $('#reply_comment_id').val('0');
+                                        $('#no_comment').remove();
+                                        $('html').animate({scrollTop: $('#comment_list').offset().top -200}, 100);
+                                        location.reload(); //刷新页面
+                                    }else {
+                                        // 打印错误信息
+                                        //$('comment_error').text(data['message']);
+                                        document.getElementById("comment_error").innerHTML = data['message'];
+                                    }
+
+                                },
+                                error:function (xhr) {
+                                    console.log(xhr);
+                                }
+                            });
+                            return false;
+                        });
+
+                        function comment_time_format(timestamp) {
+                            var datetime = new Date(timestamp *1000); //js以毫秒为单位
+                            var year = datetime.getFullYear();
+                            var month = timestamp_handle(datetime.getMonth() + 1); //从0开始，要加1
+                            var day = timestamp_handle(datetime.getDate()); //getDay是星期
+                            var hour = timestamp_handle(datetime.getHours());
+                            var minute = timestamp_handle(datetime.getMinutes());
+
+
+                            return year+'-'+month+'-'+day+'- '+hour+':'+minute;
+                        }
+                        function timestamp_handle(time) {
+                            return ('00'+time).substr(-2);  //当时间只有一位数，补零截取后两位
+
+                        }
+                    </script>
+                {% else %}
+                    请先登陆后发表评论
+                    <br>
+                    <a href="{% url 'login' %}?from={{ request.get_full_path }}" class="btn btn-primary">登陆</a>
+                    <span>/</span>
+                    <a href="{% url 'register' %}?from={{ request.get_full_path }}" class="btn btn-danger">注册</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
