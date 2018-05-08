@@ -1,5 +1,6 @@
 {% load static %}
 {% load comment_tags %}
+{% load like_it_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,6 +33,22 @@
         }
         span.glyphicon-comment {
             color: rgba(31,28,30,0.16);
+        }
+        .active {
+            color: red;
+        }
+        div.like_share {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        a:focus {
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: none;
+        }
+        a {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -74,10 +91,14 @@
 
                 </div>
             </div>
+
             <div class="content">
                 <p>{{ blog.content|safe }}</p>
             </div>
-            <center>
+
+            <div>
+
+                <center>
                 <div class="btn-group" role="group" aria-label="...">
                     <button type="button" class="btn btn-default">
                         <a class="btn" href="/blog/{{ previous_blog.id }}">上一篇</a>
@@ -87,10 +108,25 @@
                     </button>
                 </div>
             </center>
+            </div>
+
+
+
         </div>
     </div>
-
+</div> <!--点赞分享-->
+<div class="container like_share">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-1">
+            <div class="like btn btn-primary btn-lg" onclick="like_change(this,'blog',{{ blog.id }});">
+                <span class="glyphicon glyphicon-thumbs-up {% get_like_status blog %}"></span>
+                <span>赞一下</span>&nbsp;|&nbsp;
+                <span class="liked-num">{% get_num_liked blog %}</span>
+            </div>
+        </div>
+    </div>
 </div>
+
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-1">
@@ -117,6 +153,17 @@
                                     <div style="padding-bottom: 10px;padding-top: 10px;">
                                        <span class="comment_text">{{ comment.text|safe }}</span>
                                     </div>
+
+                                    <a onclick="like_change(this,'{% get_content_type comment %}',{{ comment.pk }});">
+                                        <span class="glyphicon glyphicon-thumbs-up {% get_like_status blog %}"></span>
+                                        <span class="liked-num">{% get_num_liked comment %}</span>人赞 &nbsp;
+                                    </a>
+{#                                    <a href="javascript:like_change(this, '', {{  }});">#}
+{#                                        <span class="glyphicon glyphicon-thumbs-up {% get_like_status comment %}"></span>#}
+{#                                        <span class="liked-num">{% get_num_liked comment %}人赞</span>&nbsp;&nbsp;#}
+{#                                    </a>#}
+
+
                                     <span class="glyphicon glyphicon-comment"></span>
                                     <a href="javascript:reply({{ comment.pk }})">回复</a>
                                 </div>
@@ -179,109 +226,7 @@
                         </div>
                     </form>
 
-                    <script>
-                        function reply(reply_comment_id) {
-                             //向comment_form的隐藏input中传入要回复的id，来自'回复'a标签
-                            $('#reply_comment_id').val(reply_comment_id);                            // 点击回复时编辑区显示要回复的对象
-                            var html = $('#comment_'+reply_comment_id).html();
-                            $('#reply_username').html(html);
-                            $('#reply_content_block').show();
-                            document.getElementById("editor_info_default").style.display="none";
-                            //document.getElementById("EleId").style.visibility="hidden";  占空白行
 
-                            //点击回复 滚动到文本编辑
-                            $('html').animate({scrollTop: $('#comment_form').offset().top -50}, 300, function () {
-                                CKEDITOR.instances['id_comment_text'].focus(); // 滚动后执行的func
-                            })  // 300：时间（动画）
-                        }
-
-                        function comment_directly() {
-                             $('html').animate({scrollTop: $('#comment_form').offset().top -50}, 300, function () {
-                                CKEDITOR.instances['id_comment_text'].focus(); // 滚动后执行的func
-                            })  // 300：时间（动画）
-                        }
-                        $('#comment_form').submit(function () {
-                            document.getElementById("comment_error").innerHTML = '';
-                            //更新数据到textarea
-                            CKEDITOR.instances['id_comment_text'].updateElement();
-
-                           // 异步提交
-                            $.ajax({
-                                url:'{% url 'update_comment' %}',
-                                type:'POST',
-                                data:$('#comment_form').serialize(),
-                                cache:false,
-                                success:function (data) {
-                                    console.log(data);
-                                    //判断数据是否成功
-                                    if(data['status']=='SUCCESS'){
-                                        //插入数据到评论列表
-                                        var comment_html = '<div id="root_'+data['pk']+' class="comment_block">'+
-                                                                '<div class="comment_detail">'+
-                                                                    '<span id="comment_'+data['pk']+'">'+data['username']+'</span>&nbsp;&nbsp;'+
-                                                                    '<span class="comment_time">'+comment_time_format(data['comment_time'])+'</span>'+
-                                                                    '<br>'+
-                                                                    '<span class="comment_text">'+data['comment_text']+'</span>'+'<br>'+
-                                                                    '<span class="glyphicon glyphicon-comment"></span> '+
-                                                                    '<a href="javascript:reply(' + data['pk'] + ')">回复</a>'+
-                                                                '</div>'+
-                                                            '</div> <hr>';
-
-                                        var reply_html = '<div class="reply">'+
-                                                            '<span id="comment_'+data['pk']+'">'+data['username']+':</span>'+
-                                                            '<span>@'+data['reply_to']+'</span> '+
-                                                            '<span>'+data['comment_text']+'</span> '+
-                                                            '<a href="javascript:reply('+data['pk']+')">回复</a>'+
-                                                        '</div>';
-
-                                        // 判断是否
-                                        if($('#reply_comment_id').val()==='0'){
-                                            // 插入一级评论
-                                            $('#comment_list').prepend(comment_html);
-                                        }else {
-                                            // 插入二级回复
-                                            $('#root_'+data['root_pk']).append(reply_html);
-                                        }
-                                        {#$('#comment_list').prepend(comment_ajax);#}
-
-                                        //清空编辑栏内容
-                                        CKEDITOR.instances['id_comment_text'].setData('');
-
-                                        $('#reply_content_block').hide();
-                                        $('#reply_comment_id').val('0');
-                                        $('#no_comment').remove();
-                                        $('html').animate({scrollTop: $('#comment_list').offset().top -200}, 100);
-                                        location.reload(); //刷新页面
-                                    }else {
-                                        // 打印错误信息
-                                        //$('comment_error').text(data['message']);
-                                        document.getElementById("comment_error").innerHTML = data['message'];
-                                    }
-
-                                },
-                                error:function (xhr) {
-                                    console.log(xhr);
-                                }
-                            });
-                            return false;
-                        });
-
-                        function comment_time_format(timestamp) {
-                            var datetime = new Date(timestamp *1000); //js以毫秒为单位
-                            var year = datetime.getFullYear();
-                            var month = timestamp_handle(datetime.getMonth() + 1); //从0开始，要加1
-                            var day = timestamp_handle(datetime.getDate()); //getDay是星期
-                            var hour = timestamp_handle(datetime.getHours());
-                            var minute = timestamp_handle(datetime.getMinutes());
-
-
-                            return year+'-'+month+'-'+day+'- '+hour+':'+minute;
-                        }
-                        function timestamp_handle(time) {
-                            return ('00'+time).substr(-2);  //当时间只有一位数，补零截取后两位
-
-                        }
-                    </script>
                 {% else %}
                     请先登陆后发表评论
                     <br>
@@ -293,5 +238,146 @@
         </div>
     </div>
 </div>
+<script>
+    function reply(reply_comment_id) {
+        //向comment_form的隐藏input中传入要回复的id，来自'回复'a标签
+        $('#reply_comment_id').val(reply_comment_id);                            // 点击回复时编辑区显示要回复的对象
+        var html = $('#comment_'+reply_comment_id).html();
+        $('#reply_username').html(html);
+        $('#reply_content_block').show();
+        document.getElementById("editor_info_default").style.display="none";
+        //document.getElementById("EleId").style.visibility="hidden";  占空白行
+
+        //点击回复 滚动到文本编辑
+        $('html').animate({scrollTop: $('#comment_form').offset().top -50}, 300, function () {
+            CKEDITOR.instances['id_comment_text'].focus(); // 滚动后执行的func
+        })  // 300：时间（动画）
+    }
+
+    function comment_directly() {
+        $('html').animate({scrollTop: $('#comment_form').offset().top -50}, 300, function () {
+            CKEDITOR.instances['id_comment_text'].focus(); // 滚动后执行的func
+        })  // 300：时间（动画）
+    }
+
+    $('#comment_form').submit(function () {
+        document.getElementById("comment_error").innerHTML = '';
+        //更新数据到textarea
+        CKEDITOR.instances['id_comment_text'].updateElement();
+
+        // 异步提交
+        $.ajax({
+            url:'{% url 'update_comment' %}',
+            type:'POST',
+            data:$('#comment_form').serialize(),
+            cache:false,
+            success:function (data) {
+                console.log(data);
+                //判断数据是否成功
+                if(data['status']=='SUCCESS'){
+                    //插入数据到评论列表
+                    var comment_html = '<div id="root_'+data['pk']+' class="comment_block">'+
+                        '<div class="comment_detail">'+
+                        '<span id="comment_'+data['pk']+'">'+data['username']+'</span>&nbsp;&nbsp;'+
+                        '<span class="comment_time">'+comment_time_format(data['comment_time'])+'</span>'+
+                        '<br>'+
+                        '<span class="comment_text">'+data['comment_text']+'</span>'+'<br>'+
+                        '<span class="glyphicon glyphicon-comment"></span> '+
+                        '<a href="javascript:reply(' + data['pk'] + ')">回复</a>'+
+                        '</div>'+
+                        '</div> <hr>';
+
+                    var reply_html = '<div class="reply">'+
+                        '<span id="comment_'+data['pk']+'">'+data['username']+':</span>'+
+                        '<span>@'+data['reply_to']+'</span> '+
+                        '<span>'+data['comment_text']+'</span> '+
+                        '<a href="javascript:reply('+data['pk']+')">回复</a>'+
+                        '</div>';
+
+                    // 判断是否
+                    if($('#reply_comment_id').val()==='0'){
+                        // 插入一级评论
+                        $('#comment_list').prepend(comment_html);
+                    }else {
+                        // 插入二级回复
+                        $('#root_'+data['root_pk']).append(reply_html);
+                    }
+                    {#$('#comment_list').prepend(comment_ajax);#}
+
+                    //清空编辑栏内容
+                    CKEDITOR.instances['id_comment_text'].setData('');
+
+                    $('#reply_content_block').hide();
+                    $('#reply_comment_id').val('0');
+                    $('#no_comment').remove();
+                    $('html').animate({scrollTop: $('#comment_list').offset().top -200}, 100);
+                    location.reload(); //刷新页面
+                }else {
+                    // 打印错误信息
+                    //$('comment_error').text(data['message']);
+                    document.getElementById("comment_error").innerHTML = data['message'];
+                }
+
+            },
+            error:function (xhr) {
+                console.log(xhr);
+            }
+        });
+        return false;
+    });
+
+    function comment_time_format(timestamp) {
+        var datetime = new Date(timestamp *1000); //js以毫秒为单位
+        var year = datetime.getFullYear();
+        var month = timestamp_handle(datetime.getMonth() + 1); //从0开始，要加1
+        var day = timestamp_handle(datetime.getDate()); //getDay是星期
+        var hour = timestamp_handle(datetime.getHours());
+        var minute = timestamp_handle(datetime.getMinutes());
+
+
+        return year+'-'+month+'-'+day+'- '+hour+':'+minute;
+    }
+
+    function timestamp_handle(time) {
+        return ('00'+time).substr(-2);  //当时间只有一位数，补零截取后两位
+
+    }
+
+    function like_change(obj,content_type,object_id) {
+        var like_flag = obj.getElementsByClassName('active').length===0;
+        $.ajax({
+            url: "{% url 'like_change' %}",
+            type: 'GET',
+            data: {
+                content_type:content_type,
+                object_id:object_id,
+                like_flag:like_flag
+            },
+            cache: false,
+            success: function (data) {
+                console.log(data)
+                if(data['status']==='success'){
+                        // 更新点赞状态
+                        var element = $(obj.getElementsByClassName('glyphicon glyphicon-thumbs-up'));
+                        if(like_flag){
+                            element.addClass('active');
+                            element.next().text("取消赞");
+                        }else{
+                            element.removeClass('active');
+                            element.next().text("赞一下");
+                        }
+                        // 更新点赞数量
+                        var liked_num = $(obj.getElementsByClassName('liked-num'));
+                        liked_num.text(data['num_liked']);
+                    }else{
+                        alert(data['message']);
+                    }
+            },
+            error: function (xhr) {
+                console.log(xhr)
+            }
+        })
+    }
+</script>
 </body>
 </html>
