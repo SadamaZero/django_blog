@@ -1,7 +1,6 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,inital-scale=1">
     <script type="text/javascript" src="{% static 'my_blog/jquery-3.3.1.min.js' %}"></script>
@@ -28,8 +27,8 @@
             margin-left: -5px;
         }
     </style>
-</head>
-<body>
+{% endblock head %}
+{% block body %}
 <nav class="navbar navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -115,5 +114,4 @@
         </div>
     </div>
 </div>
-</body>
-</html>
+{% endblock body %}

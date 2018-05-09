@@ -53,3 +53,7 @@ div.new_reply {
     /*border-top: 1px dashed rgba(38,44,92,0.13);*/
     border-left: 1px solid rgba(38,44,92,0.13);
 }
+li.nav-login >a {
+    padding-left: 0!important;
+    padding-right: 0!important;
+}

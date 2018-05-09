@@ -2,9 +2,11 @@ from django.shortcuts import get_object_or_404, render, redirect
 from .models import *
 from django.core.paginator import *
 from django.db.models import Count
+from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from .forms import *
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -60,6 +62,7 @@ def blog_detail(request, blog_id):
     context['read_num'] = read_num
     context['blog'] = blog
     context['user'] = request.user
+    context['login_form'] = LoginForm()
     # -----------------------自定标签法替代-----------------------------------------
 
     # 评论表单初始化
@@ -140,6 +143,7 @@ def login_blog(request):
             if user is not None:
                 login(request, user)
                  # 验证成功 重定向
+                # if request.is_ajax():
                 return redirect(request.GET.get('from', reverse('home')))
             else:
                 login_form.add_error(None, '用户名或密码不正确')  # (字段名（无法判断不写具体）， 错误信息)
@@ -153,7 +157,26 @@ def login_blog(request):
 
     context = {}
     context['login_form'] = login_form
+    # if request.is_ajax():
     return render(request, 'login_page.html', context)
+
+
+def login_for_medal(request):
+    login_form = LoginForm(request.POST)
+    data = {}
+    if login_form.is_valid():  # 合法
+        username = login_form.cleaned_data['username']
+        password = login_form.cleaned_data['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            data['status'] = 'SUCCESS'
+        else:
+            data['status'] = 'ERROR'
+    else:
+        data['status'] = 'ERROR'
+
+    return JsonResponse(data)
 
 
 # 新用户注册
