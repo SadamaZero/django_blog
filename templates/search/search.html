@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <meta charset="UTF-8">
+    <title>搜索</title>
+    <script type="text/javascript" src="{% static 'my_blog/jquery-3.3.1.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'base/base.css' %}">
+    <link rel="stylesheet" href="{% static "my_blog/bootstrap.min.css" %}">
+    <script src="{% static 'my_blog/bootstrap.min.js' %}"></script>
+{% endblock head %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">搜索结果</h3>
+                    </div>
+                    <div class="panel-body">
+                        {% if query %}
+                            {% for result in page.object_list %}
+                                <a href="/blog/{{ result.object.id }}">{{ result.object.title }}</a><br/>
+                            {% empty %}
+                                <p>无</p>
+                            {% endfor %}
+
+                            {% if page.has_previous or page.has_next %}
+                                <div>
+                                    {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; 上一页{% if page.has_previous %}</a>{% endif %}
+                                |
+                                    {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}下一页 &raquo;{% if page.has_next %}</a>{% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

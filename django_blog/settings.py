@@ -37,11 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'haystack',
     'ckeditor',
     'ckeditor_uploader',
     'my_blog',
     'comment',
     'like_it',
+    'user_center',
 ]
 
 MIDDLEWARE = [
@@ -167,3 +169,11 @@ CKEDITOR_CONFIGS = {
 		),
 	}
 }
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
+}
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'

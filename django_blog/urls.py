@@ -32,6 +32,8 @@ urlpatterns = [
     path('login_medal/', login_for_medal, name='login_for_medal'),  # ajax弹出框登陆
     path('register/', register, name='register'),
     path('logout/', logout_view, name='logout'),
+    path('user_center/', include('user_center.urls')),
+    path('search/', include('haystack.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
