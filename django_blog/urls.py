@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from my_blog.views import blog_list, login_blog, register, logout_view, login_for_medal
+from my_blog.views import blog_list
 
 
 urlpatterns = [
@@ -28,10 +28,6 @@ urlpatterns = [
     path('blog/', include('my_blog.urls')),
     path('comment/', include('comment.urls')),
     path('like_it/', include('like_it.urls')),
-    path('login/', login_blog, name='login'),
-    path('login_medal/', login_for_medal, name='login_for_medal'),  # ajax弹出框登陆
-    path('register/', register, name='register'),
-    path('logout/', logout_view, name='logout'),
     path('user_center/', include('user_center.urls')),
     path('search/', include('haystack.urls')),
 ]

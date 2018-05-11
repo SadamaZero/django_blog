@@ -5,11 +5,11 @@ body {
 li.nav-li {
     top: 5px;
 }
-nav.navbar {
+/*nav.navbar {*/
 
-    background-color: #eeedec;
-    border-bottom: 1px solid #d1d1c9;
-}
+    /*background-color: #eeedec;*/
+    /*border-bottom: 1px solid #d1d1c9;*/
+/*}*/
 
 div.navbar-brand {
     padding-top: 16px;
@@ -56,4 +56,10 @@ div.new_reply {
 li.nav-login >a {
     padding-left: 0!important;
     padding-right: 0!important;
+}
+a.write_log {
+    padding: 5px;
+    margin-bottom: 0;
+    margin-top: 0;
+    top: 10px;
 }

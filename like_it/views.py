@@ -8,7 +8,7 @@ from .models import LikeCount, LikeRecord
 def like_change(request):
     user = request.user
     if not user.is_authenticated:
-        return error_response(400, 'not sign in yet.')
+        return error_response(400, '请先登录')
 
     content_type = request.GET.get('content_type')
     object_id = int(request.GET.get('object_id'))

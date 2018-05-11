@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from .forms import *
 from django.http import JsonResponse
-
+from markdown import markdown
 
 # Create your views here.
 def blog_list(request, index=1):
@@ -57,7 +57,14 @@ def blog_detail(request, blog_id):
     if next_blog is None:
         next_blog = blog
 
-
+    if blog.blog_type.id == 3:  # 使用md编辑器
+        # markdown转换
+        blog.content = markdown(blog.content,
+                                extension=[
+                                    'markdown.extensions.extra',
+                                    'markdown.extensions.codehilite',
+                                    'markdown.extensions.toc',
+                                ])
     context = {}
     context['read_num'] = read_num
     context['blog'] = blog
@@ -141,42 +148,40 @@ def login_blog(request):
             password = login_form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user is not None:
+                request.session['user_id'] = user.id
                 login(request, user)
-                 # 验证成功 重定向
-                # if request.is_ajax():
-                return redirect(request.GET.get('from', reverse('home')))
-            else:
+                 # 区分请求
+                if request.is_ajax():
+                    data = {
+                        'status': 'SUCCESS',
+                    }
+                    return JsonResponse(data)
+                else:
+                    return redirect(request.GET.get('from', reverse('home')))
+            else:  # 用户不存在
+                if request.is_ajax():
+                    data = {
+                        'status': 'ERROR',
+                    }
+                    return JsonResponse(data)
                 login_form.add_error(None, '用户名或密码不正确')  # (字段名（无法判断不写具体）， 错误信息)
             # Form类clean方法
             # user = login_form.cleaned_data['user']
             # login(request, user)
             # return redirect(request.GET.get('from', reverse('home')))
 
-    else:
+    else:  # 非法数据
+        if request.is_ajax():
+            data = {
+                'status': 'ERROR',
+            }
+            return JsonResponse(data)
         login_form = LoginForm()
 
     context = {}
     context['login_form'] = login_form
     # if request.is_ajax():
     return render(request, 'login_page.html', context)
-
-
-def login_for_medal(request):
-    login_form = LoginForm(request.POST)
-    data = {}
-    if login_form.is_valid():  # 合法
-        username = login_form.cleaned_data['username']
-        password = login_form.cleaned_data['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            data['status'] = 'SUCCESS'
-        else:
-            data['status'] = 'ERROR'
-    else:
-        data['status'] = 'ERROR'
-
-    return JsonResponse(data)
 
 
 # 新用户注册

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>写文章</title>
+    {{blog_form.media}}
+    <script type="text/javascript" src="{% static 'my_blog/jquery-3.3.1.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'base/base.css' %}">
+    <link rel="stylesheet" href="{% static "my_blog/bootstrap.min.css" %}">
+    <script src="{% static 'my_blog/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+    <style>
+        #id_title {
+            display: none;
+        }
+        input.title {
+            font-size: 30px;
+            border: 0;
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-fixed-top navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <div class="navbar-brand">
+                科成帅比博客
+            </div>
+            <button type="button" class="navbar-toggle collasped" data-toggle="collapse"
+                    data-target="#navbar-collapse" aria-expanded="false">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+             </button>
+        </div>
+
+        <div id="navbar-collapse" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <ul class="nav nav-pills">
+                    <li role="presentation" class="nav-li"><a href="/">主页</a></li>
+                    <li class="nav-li"><a href="#">联系我们</a></li>
+{#                    <li class="nav-li"><a href="{% url 'logout' %}?from={{ request.get_full_path }}">退出</a></li>#}
+                </ul>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <ul class="nav nav-pills">
+                    <li class="dropdown nav-li">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">{{ user.username }} <span class="caret"></span></a>
+                        <ul class="dropdown-menu dropdown-menu-left">
+                            <li>
+                                <a href="{% url 'user_info' %}"><span class="glyphicon glyphicon-user"></span> 我的主页</a>
+                            </li>
+                            <li><a href="#"><span class="glyphicon glyphicon-heart-empty"></span> 喜欢的文章</a></li>
+                            <li><a href="#"><span class="glyphicon glyphicon-edit"></span> 帮助与反馈</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'logout' %}?from={{ request.get_full_path }}">退出</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </ul>
+        </div><!--navbar-collapse-->
+    </div>
+    </nav>
+<div class="container">
+    <div class="row">
+         <div class="col-md-2 col-xs-3">
+            <button id="commit" class="btn btn-primary"> 发表</button>
+        </div>
+        <div class="col-md-10 col-xs-9">
+            <form action="{% url 'article_commit' %}" method="POST">
+                <input type="text" class="title" placeholder="请输入标题">
+                {% csrf_token %}
+                {% for field in blog_form %}
+                    {{ field }}
+                {% endfor %}
+                <input id="form_commit" type="submit" value="发表" style="display: none">
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // todo:标题传值、按键绑定提交
+    // ajax POST 转换后的HTML
+    $('#commit').click(function () {
+        $(".editormd-html-textarea").attr("name", "html");
+       $.ajax({
+           url:'{% url 'article_commit' %}',
+           type:'POST',
+           data:'',
+           cache:false,
+           success:function (data) {
+               if(data['status']==='SUCCESS'){
+                   window.location.reload()
+               }else {
+                   $('#login_medal_tip').text('用户名或密码不正确');
+               }
+           }
+       });
+       return false;
+    });
+</script>
+</body>
+</html>

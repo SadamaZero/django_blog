@@ -11,6 +11,7 @@
     <script src="{% static 'my_blog/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
     <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+    <script src="{% static "markdown/markdown.min.js" %}"></script>
     <style>
         div.content {
             padding-top: 20px;
@@ -69,11 +70,12 @@
 
                 </div>
             </div>
-
+            <!-------------------------------------------->
             <div class="content">
+{#                <p>{{ blog_body|safe }}</p>#}
                 <p>{{ blog.content|safe }}</p>
             </div>
-
+            <!-------------------------------------------->
             <div>
 
                 <center>
@@ -234,6 +236,7 @@
                         {{ field }}
                         <p class="text-danger">{{ field.errors.as_text }}</p>
                     {% endfor %}
+                    <a href="#" style="font-size: 10px;">忘记密码？</a>
                     <span id="login_medal_tip" class="text-danger">{{ login_form.non_field_errors }}</span>
                 </div>
                 <div class="modal-footer">
@@ -366,7 +369,6 @@
             },
             cache: false,
             success: function (data) {
-                console.log(data)
                 if(data['status']==='success'){
                         // 更新点赞状态
                         var element = $(obj.getElementsByClassName('glyphicon glyphicon-thumbs-up'));
@@ -395,7 +397,7 @@
     
     $('#modal_login_form').submit(function () {
        $.ajax({
-           url:'{% url 'login_for_medal' %}',
+           url:'{% url 'login' %}',
            type:'POST',
            data:$('#modal_login_form').serialize(),
            cache:false,

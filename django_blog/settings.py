@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'haystack',
     'ckeditor',
     'ckeditor_uploader',
+    'markdown',
+    'markdown_editor',
     'my_blog',
     'comment',
     'like_it',
