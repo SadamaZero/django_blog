@@ -65,7 +65,7 @@
                                         &nbsp;&nbsp;
                                     <span class="glyphicon glyphicon-comment" style="color: rgba(0, 1, 6, 0.55);"></span> 评论({% comments_count item %})
                                     <br>
-                                    <p style="overflow: hidden;">{{ item.content|truncatechars:80|safe }}</p>
+                                    <p style="overflow: hidden;">{{ item.content|striptags|truncatechars:80|safe }}</p>
                                     {% if not forloop.last %}<hr>{% endif %}
                                 </div>
                             </li>

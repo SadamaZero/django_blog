@@ -4,7 +4,7 @@ from .models import *
 
 @admin.register(LikeRecord)
 class LikeRecordAdmin(admin.ModelAdmin):
-    list_display = ('user', 'content_type', 'object_id')
+    list_display = ('user', 'content_type', 'object_id', 'content_object')
 
 
 @admin.register(LikeCount)

@@ -16,9 +16,9 @@
             display: none;
         }
         input.title {
-            font-size: 30px;
+            font-size: 32px;
             border: 0;
-            font-weight: 900;
+            font-weight: 800;
         }
     </style>
 </head>
@@ -72,12 +72,12 @@
         </div>
         <div class="col-md-10 col-xs-9">
             <form action="{% url 'article_commit' %}" method="POST">
-                <input type="text" class="title" placeholder="请输入标题">
+                <input type="text" id="title_input" class="title" placeholder="请输入标题">
                 {% csrf_token %}
                 {% for field in blog_form %}
                     {{ field }}
                 {% endfor %}
-                <input id="form_commit" type="submit" value="发表" style="display: none">
+                <input id="form_commit" type="submit" value="发表">
             </form>
         </div>
 
@@ -87,22 +87,16 @@
 <script>
     // todo:标题传值、按键绑定提交
     // ajax POST 转换后的HTML
+    $(function () {
+
+    });
+    $('#title_input').blur(function () {
+        var title = $('#title_input').val();
+        $('input[name="title"]').val(title)
+    });
     $('#commit').click(function () {
-        $(".editormd-html-textarea").attr("name", "html");
-       $.ajax({
-           url:'{% url 'article_commit' %}',
-           type:'POST',
-           data:'',
-           cache:false,
-           success:function (data) {
-               if(data['status']==='SUCCESS'){
-                   window.location.reload()
-               }else {
-                   $('#login_medal_tip').text('用户名或密码不正确');
-               }
-           }
-       });
-       return false;
+        var a = $('input[name="title"]');
+        console.log(a.val());
     });
 </script>
 </body>

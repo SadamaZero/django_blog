@@ -9,6 +9,7 @@ from .forms import *
 from django.http import JsonResponse
 from markdown import markdown
 
+
 # Create your views here.
 def blog_list(request, index=1):
     blogs = Blog.objects.all()
@@ -57,14 +58,14 @@ def blog_detail(request, blog_id):
     if next_blog is None:
         next_blog = blog
 
-    if blog.blog_type.id == 3:  # 使用md编辑器
-        # markdown转换
-        blog.content = markdown(blog.content,
-                                extension=[
-                                    'markdown.extensions.extra',
-                                    'markdown.extensions.codehilite',
-                                    'markdown.extensions.toc',
-                                ])
+    # if blog.blog_type.id == 3:  # 使用md编辑器
+    #     # markdown转换
+    #     blog.content = markdown(blog.content,
+    #                             extension=[
+    #                                 'markdown.extensions.extra',
+    #                                 'markdown.extensions.codehilite',
+    #                                 'markdown.extensions.toc',
+    #                             ])
     context = {}
     context['read_num'] = read_num
     context['blog'] = blog

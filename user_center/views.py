@@ -20,12 +20,12 @@ def user_write_article(request):
 
 @my_decorator.login_status
 def article_commit(request):
-    blog_form = BlogForm(request.POST)
-
+    content = request.POST['id_context-wmd-wrapper-html-code']
+    title = request.POST['title']
     new_blog = models.Blog()
-    new_blog.title = blog_form.data['title']
-    new_blog.content = blog_form.data['context']
+    new_blog.title = title
+    new_blog.content = content
     new_blog.author = request.user
     new_blog.blog_type = models.BlogType.objects.get(id=3)  # user_article
-    # new_blog.save()
+    new_blog.save()
     return render(request, 'user_center/user_info.html')

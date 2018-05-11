@@ -38,7 +38,7 @@
 
             <ul class="nav navbar-nav navbar-right">
                 {% if not user.is_authenticated %}
-                    <li class="nav-login"><a href="{% url 'login' %}?from={{ request.get_full_path }}">登陆 |</a></li>
+                    <li class="nav-login"><a href="{% url 'login' %}?from={{ request.get_full_path }}" id="nav_login">登陆 |</a></li>
                     <li class="nav-login"><a href="{% url 'register' %}?from={{ request.get_full_path }}">&nbsp;注册</a></li>
                 {% else %}
                     <ul class="nav nav-pills">

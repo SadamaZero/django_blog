@@ -172,6 +172,10 @@ CKEDITOR_CONFIGS = {
 	}
 }
 
+# markdown upload
+MARKDOWN_IMAGE_FLODER = 'markdown'
+MARKDOWN_IMAGE_FORMATS = ["jpg", "jpeg", "gif", "png", "bmp", "webp"]
+
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',

@@ -49,6 +49,9 @@
         button.login_modal {
             text-align: center;
         }
+        .modal-dialog {
+            margin: 200px auto;
+        }
     </style>
 {% endblock head %}
 
@@ -136,7 +139,7 @@
                                     </div>
 
                                     <a onclick="like_change(this,'{% get_content_type comment %}',{{ comment.pk }});">
-                                        <span class="glyphicon glyphicon-thumbs-up {% get_like_status blog %}"></span>
+                                        <span class="glyphicon glyphicon-thumbs-up {% get_like_status comment %}"></span>
                                         <span class="liked-num">{% get_num_liked comment %}</span>人赞 &nbsp;
                                     </a>
 {#                                    <a href="javascript:like_change(this, '', {{  }});">#}
@@ -254,24 +257,34 @@
 </div>
 <script>
     function reply(reply_comment_id) {
-        //向comment_form的隐藏input中传入要回复的id，来自'回复'a标签
-        $('#reply_comment_id').val(reply_comment_id);                            // 点击回复时编辑区显示要回复的对象
-        var html = $('#comment_'+reply_comment_id).html();
-        $('#reply_username').html(html);
-        $('#reply_content_block').show();
-        document.getElementById("editor_info_default").style.display="none";
-        //document.getElementById("EleId").style.visibility="hidden";  占空白行
+        if(login_status()){
+           //向comment_form的隐藏input中传入要回复的id，来自'回复'a标签
+            $('#reply_comment_id').val(reply_comment_id);                            // 点击回复时编辑区显示要回复的对象
+            var html = $('#comment_'+reply_comment_id).html();
+            $('#reply_username').html(html);
+            $('#reply_content_block').show();
+            document.getElementById("editor_info_default").style.display="none";
+            //document.getElementById("EleId").style.visibility="hidden";  占空白行
 
-        //点击回复 滚动到文本编辑
-        $('html').animate({scrollTop: $('#comment_form').offset().top -50}, 300, function () {
-            CKEDITOR.instances['id_comment_text'].focus(); // 滚动后执行的func
-        })  // 300：时间（动画）
+            //点击回复 滚动到文本编辑
+            $('html').animate({scrollTop: $('#comment_form').offset().top -50}, 300, function () {
+                CKEDITOR.instances['id_comment_text'].focus(); // 滚动后执行的func
+            })  // 300：时间（动画）
+        }else {
+            $('#login_modal').modal('show');
+        }
+
     }
 
     function comment_directly() {
-        $('html').animate({scrollTop: $('#comment_form').offset().top -50}, 300, function () {
+        if(login_status()){
+           $('html').animate({scrollTop: $('#comment_form').offset().top -50}, 300, function () {
             CKEDITOR.instances['id_comment_text'].focus(); // 滚动后执行的func
-        })  // 300：时间（动画）
+            })  // 300：时间（动画）
+        }else {
+            $('#login_modal').modal('show');
+        }
+
     }
 
     $('#comment_form').submit(function () {
@@ -350,6 +363,12 @@
 
 
         return year+'-'+month+'-'+day+'- '+hour+':'+minute;
+    }
+
+    //登陆状态
+    function login_status() {
+        var flag = $('#nav_login').text()===''; //未登录为false
+        return flag;
     }
 
     function timestamp_handle(time) {

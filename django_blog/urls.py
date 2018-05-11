@@ -30,6 +30,7 @@ urlpatterns = [
     path('like_it/', include('like_it.urls')),
     path('user_center/', include('user_center.urls')),
     path('search/', include('haystack.urls')),
+    path('markdown/', include('markdown_editor.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
