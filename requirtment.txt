@@ -1,0 +1,11 @@
+Django==2.0.3
+django-ckeditor==5.4.0
+django-haystack==2.8.1
+django-js-asset==1.0.0
+jieba==0.39
+Markdown==2.6.11
+markdown2==2.3.5
+Pillow==5.0.0
+Pygments==2.2.0
+pytz==2018.3
+Whoosh==2.7.4
