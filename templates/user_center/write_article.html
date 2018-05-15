@@ -20,11 +20,20 @@
             border: 0;
             font-weight: 800;
         }
+        #form_commit {
+            display: none;
+        }
+        .commit-btn {
+            right: 33px;
+        }
+        .dropdown,.nav-li {
+            right: 13px;
+        }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-fixed-top navbar-default" role="navigation">
-    <div class="container">
+    <div class="container-fluid">
         <div class="navbar-header">
             <div class="navbar-brand">
                 科成帅比博客
@@ -41,38 +50,38 @@
             <ul class="nav navbar-nav">
                 <ul class="nav nav-pills">
                     <li role="presentation" class="nav-li"><a href="/">主页</a></li>
-                    <li class="nav-li"><a href="#">联系我们</a></li>
-{#                    <li class="nav-li"><a href="{% url 'logout' %}?from={{ request.get_full_path }}">退出</a></li>#}
                 </ul>
             </ul>
 
-            <ul class="nav navbar-nav navbar-right">
-                <ul class="nav nav-pills">
-                    <li class="dropdown nav-li">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">{{ user.username }} <span class="caret"></span></a>
-                        <ul class="dropdown-menu dropdown-menu-left">
-                            <li>
-                                <a href="{% url 'user_info' %}"><span class="glyphicon glyphicon-user"></span> 我的主页</a>
-                            </li>
-                            <li><a href="#"><span class="glyphicon glyphicon-heart-empty"></span> 喜欢的文章</a></li>
-                            <li><a href="#"><span class="glyphicon glyphicon-edit"></span> 帮助与反馈</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="{% url 'logout' %}?from={{ request.get_full_path }}">退出</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <ul class="nav navbar-nav navbar-right ">
+                <li class="commit-btn">
+                    <button id="commit" class="btn btn-primary navbar-btn"> 发 布 </button>
+                </li>
+                <li>
+                    <ul class="nav nav-pills">
+                        <li class="dropdown nav-li">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                <span class="glyphicon glyphicon-menu-hamburger"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a href="{% url 'user_info' %}"><span class="glyphicon glyphicon-user"></span> 我的主页</a>
+                                </li>
+                                <li><a href="#"><span class="glyphicon glyphicon-heart-empty"></span> 喜欢的文章</a></li>
+                                <li><a href="#"><span class="glyphicon glyphicon-edit"></span> 帮助与反馈</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </div><!--navbar-collapse-->
     </div>
     </nav>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-         <div class="col-md-2 col-xs-3">
-            <button id="commit" class="btn btn-primary"> 发表</button>
-        </div>
-        <div class="col-md-10 col-xs-9">
+        <div class="col-md-10 col-md-offset-1 col-xs-12">
             <form action="{% url 'article_commit' %}" method="POST">
-                <input type="text" id="title_input" class="title" placeholder="请输入标题">
+                <input type="text" id="title_input" class="title" placeholder="请输入标题" maxlength="50">
                 {% csrf_token %}
                 {% for field in blog_form %}
                     {{ field }}
@@ -95,8 +104,7 @@
         $('input[name="title"]').val(title)
     });
     $('#commit').click(function () {
-        var a = $('input[name="title"]');
-        console.log(a.val());
+        $('#form_commit').click();
     });
 </script>
 </body>

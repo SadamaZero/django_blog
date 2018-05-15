@@ -132,6 +132,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'collect_static')
 STATICFILES_DIRS = [
                 os.path.join(BASE_DIR, 'Static'),
                 os.path.join(BASE_DIR, 'my_blog/static'),
+
 ]
 CKEDITOR_JQUERY_URL = 'https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js'
 MEDIA_URL = '/media/'

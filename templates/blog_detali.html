@@ -75,7 +75,6 @@
             </div>
             <!-------------------------------------------->
             <div class="content">
-{#                <p>{{ blog_body|safe }}</p>#}
                 <p>{{ blog.content|safe }}</p>
             </div>
             <!-------------------------------------------->
@@ -83,12 +82,8 @@
 
                 <center>
                 <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default">
-                        <a class="btn" href="/blog/{{ previous_blog.id }}">上一篇</a>
-                    </button>
-                    <button type="button" class="btn btn-default">
-                        <a class="btn" href="/blog/{{ next_blog.id }}">下一篇</a>
-                    </button>
+                    <a class="btn btn-default" href="/blog/{{ previous_blog.id }}">上一篇</a>
+                    <a class="btn btn-default" href="/blog/{{ next_blog.id }}">下一篇</a>
                 </div>
             </center>
             </div>

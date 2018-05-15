@@ -1,13 +1,65 @@
 body {
     margin-top: 70px!important;
+    /*font-size: 16px!important;*/
 }
-div.navbar-brand-user {
-    color: #9d9d9d;
-    float: left;
-    height: 50px;
-    padding: 15px 15px;
-    font-size: 18px;
-    line-height: 20px;
-    box-sizing: border-box;
-    margin-left: -5px;
+li.nav-li {
+    top: 5px;
+}
+/*nav.navbar {*/
+
+    /*background-color: #eeedec;*/
+    /*border-bottom: 1px solid #d1d1c9;*/
+/*}*/
+
+div.navbar-brand {
+    padding-top: 16px;
+}
+h4.comment-area-title {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.4em;
+    font-weight:bold;
+}
+div.comment_area_head {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.4em;
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+div.comment_area_head>h4 {
+    font-weight:bold;
+    padding-bottom: 0.4em;
+    padding-right: 20px;
+}
+div.comment_area {
+    margin-top: 2em;
+}
+/*.btn-primary {*/
+    /*float: right;*/
+/*}*/
+div.django-ckeditor-widget {
+    width: 100%;
+}
+div.comment_detail {
+    margin-bottom: 0.5em;
+    padding-bottom: 0.5em;
+}
+div.reply {
+    padding: 10px;
+    margin-left: 0px;
+    border-left: 1px solid rgba(38,44,92,0.13);
+}
+div.new_reply {
+    padding: 10px;
+    /*border-top: 1px dashed rgba(38,44,92,0.13);*/
+    border-left: 1px solid rgba(38,44,92,0.13);
+}
+li.nav-login >a {
+    padding-left: 0!important;
+    padding-right: 0!important;
+}
+a.write_log {
+    padding: 5px;
+    margin-bottom: 0;
+    margin-top: 0;
+    top: 10px;
 }
